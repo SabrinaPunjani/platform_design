@@ -20,123 +20,24 @@ import 'widgets.dart';
 final FlutterBlue flutterBlue = FlutterBlue.instance;
 // enum BluetoothState { disabled, enabled, connected, disconnected, loading }
 
-void main() {
-  runApp(const MyAdaptingApp());
-}
-
 bool checkBluetoothStatus() {
   return true;
 }
 
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-  final FlutterBlue flutterBlue = FlutterBlue.instance;
-  final List<BluetoothDevice> devicesList = <BluetoothDevice>[];
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<MyHomePage> {
-  int bottomNavbarIndex = 0;
-
-  _addDeviceTolist(final BluetoothDevice device) {
-    if (!widget.devicesList.contains(device)) {
-      setState(() {
-        widget.devicesList.add(device);
-      });
-    }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    widget.flutterBlue.connectedDevices
-        .asStream()
-        .listen((List<BluetoothDevice> devices) {
-      for (BluetoothDevice device in devices) {
-        _addDeviceTolist(device);
-      }
-    });
-    widget.flutterBlue.scanResults.listen((List<ScanResult> results) {
-      for (ScanResult result in results) {
-        _addDeviceTolist(result.device);
-      }
-    });
-    widget.flutterBlue.startScan();
-  }
-
-  // FOR BLUETOOTH
-  ListView _buildListViewOfDevices() {
-    List<Widget> containers = <Widget>[];
-    // widget.devicesList
-    for (BluetoothDevice device in widget.devicesList) {
-      containers.add(
-        SizedBox(
-          height: 50,
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(device.name == '' ? '(unknown device)' : device.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold)
-                        // style: const TextStyle(
-                        //   fontWeight: FontWeight.bold,
-                        // ),
-                        ),
-                    Text(device.id.toString()),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                // color: Colors.blue,
-                child: const Text(
-                  'Connect',
-                  // style: TextStyle(color: Colors.white),
-                ),
-                onPressed: () {},
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: <Widget>[
-        ...containers,
-      ],
-    );
-  }
-class SongsTab extends StatefulWidget {
+class optionTabKey extends StatefulWidget {
   static const title = 'Connect to Glasses (or Home?)';
   static const androidIcon = Icon(Icons.home);
   static const iosIcon = Icon(CupertinoIcons.music_note);
 
-  const SongsTab({super.key, this.androidDrawer});
+  const optionTabKey({super.key, this.androidDrawer});
 
   final Widget? androidDrawer;
 
   @override
-  State<SongsTab> createState() => _SongsTabState();
+  State<optionTabKey> createState() => _SongsTabState();
 }
 
-class _SongsTabState extends State<SongsTab> {
+class _SongsTabState extends State<optionTabKey> {
   static const _itemsLength = 50;
 
   final _androidRefreshKey = GlobalKey<RefreshIndicatorState>();
@@ -223,7 +124,7 @@ class _SongsTabState extends State<SongsTab> {
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(SongsTab.title),
+        title: const Text(optionTabKey.title),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
