@@ -70,7 +70,15 @@ class _PressableCardState extends State<PressableCard>
   late final Animation<double> elevationAnimation;
 
   @override
-  void initState();
+  void initState() {
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 40),
+    );
+    elevationAnimation =
+        controller.drive(CurveTween(curve: Curves.easeInOutCubic));
+    super.initState();
+  }
 
   @override
   void dispose() {
