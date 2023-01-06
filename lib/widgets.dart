@@ -5,6 +5,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+// import 'bluetooth/bluetooth-off-screen.dart';
+import 'dart:async';
+import 'dart:math';
+
+final FlutterBlue flutterBlue = FlutterBlue.instance;
+// enum BluetoothState { disabled, enabled, connected, disconnected, loading }
 
 /// A simple widget that builds different things on different platforms.
 class PlatformWidget extends StatelessWidget {
@@ -60,15 +70,7 @@ class _PressableCardState extends State<PressableCard>
   late final Animation<double> elevationAnimation;
 
   @override
-  void initState() {
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 40),
-    );
-    elevationAnimation =
-        controller.drive(CurveTween(curve: Curves.easeInOutCubic));
-    super.initState();
-  }
+  void initState();
 
   @override
   void dispose() {

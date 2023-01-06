@@ -4,14 +4,26 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'settings_tab.dart';
 import 'widgets.dart';
 
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+// Import for iOS features.
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
+// #enddocregion platform_imports
+
 class ProfileTab extends StatelessWidget {
-  static const title = 'Finished Reading';
-  static const androidIcon = Icon(Icons.library_books);
-  static const iosIcon = Icon(CupertinoIcons.book);
+  static const title = 'Social/Account Connections';
+  static const androidIcon = Icon(Icons.link);
+  static const iosIcon = Icon(CupertinoIcons.link);
 
   const ProfileTab({super.key});
 

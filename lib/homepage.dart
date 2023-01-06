@@ -19,6 +19,7 @@ import 'dart:math';
 
 final FlutterBlue flutterBlue = FlutterBlue.instance;
 // enum BluetoothState { disabled, enabled, connected, disconnected, loading }
+final List<BluetoothDevice> devicesList = <BluetoothDevice>[];
 
 class OptionTab extends StatefulWidget {
   static const title = 'Connect Glasses (Home?)';
@@ -34,7 +35,7 @@ class OptionTab extends StatefulWidget {
 }
 
 class _OptionTabState extends State<OptionTab> {
-  static const _itemsLength = 50;
+  static const _itemsLength = 1;
 
   final _androidRefreshKey = GlobalKey<RefreshIndicatorState>();
 
@@ -117,11 +118,12 @@ class _OptionTabState extends State<OptionTab> {
   // And these are all design time choices that doesn't have a single 'right'
   // answer.
   // ===========================================================================
+
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(OptionTab.title),
-        actions: [
+        /*actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () async =>
@@ -131,10 +133,19 @@ class _OptionTabState extends State<OptionTab> {
             icon: const Icon(Icons.shuffle),
             onPressed: _togglePlatform,
           ),
-        ],
+        ],*/
       ),
       drawer: widget.androidDrawer,
-      body: RefreshIndicator(
+      body: Center(
+          child: ElevatedButton.icon(
+              icon: const Icon(
+                // <-- Icon
+                Icons.device_hub_outlined,
+                size: 24.0,
+              ),
+              onPressed: () {},
+              label: const Text(
+                  'Connect to Glasses'))), /*RefreshIndicator(
         key: _androidRefreshKey,
         onRefresh: _refreshData,
         child: ListView.builder(
@@ -142,7 +153,7 @@ class _OptionTabState extends State<OptionTab> {
           itemCount: _itemsLength,
           itemBuilder: _listBuilder,
         ),
-      ),
+      ),*/
     );
   }
 

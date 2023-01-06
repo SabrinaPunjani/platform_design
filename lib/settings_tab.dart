@@ -41,7 +41,7 @@ class _SettingsTabState extends State<SettingsTab> {
           ),
         ),
         ListTile(
-          title: const Text('Download New Chapters'),
+          title: const Text('Whatever random setting toggle idk'),
           // The Material switch has a platform adaptive constructor.
           trailing: Switch.adaptive(
             value: switch1,

@@ -5,8 +5,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'currently_reading.dart';
-import 'finished_reading.dart';
+import 'HUD.dart';
+import 'connections.dart';
 import 'settings_tab.dart';
 import 'homepage.dart';
 import 'widgets.dart';
@@ -83,6 +83,7 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
   // large number of items, a tab bar cannot. To illustrate one way of adjusting
   // for this, the app folds its fourth tab (the settings page) into the
   // third tab. This is a common pattern on iOS.
+
   Widget _buildIosHomePage(BuildContext context) {
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
@@ -198,3 +199,35 @@ class _AndroidDrawer extends StatelessWidget {
     );
   }
 }
+// class BluetoothOffScreen extends StatelessWidget {
+//   const BluetoothOffScreen({Key? key, this.state}) : super(key: key);
+
+//   final BluetoothState? state;
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.lightBlue,
+//       body: Center(
+//         child: Column(
+//           // mainAxisSize: MainAxisSize.min,
+//           children: <Widget>[
+//             const Icon(
+//               Icons.bluetooth_disabled,
+//               size: 200.0,
+//               color: Colors.white54,
+//             ),
+//             Text(
+//               'Bluetooth Adapter is ${state != null ? state.toString().substring(15) : 'not available'}.',
+//               style: Theme.of(context)
+//                   .primaryTextTheme
+//                   .subtitle1
+//                   ?.copyWith(color: Colors.white),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
