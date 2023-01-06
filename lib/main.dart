@@ -97,8 +97,8 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
             icon: NewsTab.iosIcon,
           ),
           BottomNavigationBarItem(
-            label: ProfileTab.title,
-            icon: ProfileTab.iosIcon,
+            label: ConnectionsTab.title,
+            icon: ConnectionsTab.iosIcon,
           ),
         ],
       ),
@@ -116,8 +116,8 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
             );
           case 2:
             return CupertinoTabView(
-              defaultTitle: ProfileTab.title,
-              builder: (context) => const ProfileTab(),
+              defaultTitle: ConnectionsTab.title,
+              builder: (context) => const ConnectionsTab(),
             );
           default:
             assert(false, 'Unexpected tab');
@@ -172,12 +172,14 @@ class _AndroidDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: ProfileTab.androidIcon,
-            title: const Text(ProfileTab.title),
+            leading: ConnectionsTab.androidIcon,
+            title: const Text(ConnectionsTab.title),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push<void>(context,
-                  MaterialPageRoute(builder: (context) => const ProfileTab()));
+              Navigator.push<void>(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ConnectionsTab()));
             },
           ),
           // Long drawer contents are often segmented.
