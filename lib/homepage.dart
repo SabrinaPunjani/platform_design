@@ -10,34 +10,30 @@ import 'package:flutter_blue/flutter_blue.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platform_design/main.dart';
 
-// import 'bluetooth/bluetooth-off-screen.dart';
-import 'dart:async';
-import 'dart:math';
 import 'song_detail_tab.dart';
 import 'utils.dart';
 import 'widgets.dart';
+// import 'bluetooth/bluetooth-off-screen.dart';
+import 'dart:async';
+import 'dart:math';
 
 final FlutterBlue flutterBlue = FlutterBlue.instance;
 // enum BluetoothState { disabled, enabled, connected, disconnected, loading }
 
-bool checkBluetoothStatus() {
-  return true;
-}
-
-class optionTabKey extends StatefulWidget {
-  static const title = 'Connect to Glasses (or Home?)';
+class OptionTab extends StatefulWidget {
+  static const title = 'Connect Glasses (Home?)';
   static const androidIcon = Icon(Icons.home);
-  static const iosIcon = Icon(CupertinoIcons.music_note);
+  static const iosIcon = Icon(CupertinoIcons.home);
 
-  const optionTabKey({super.key, this.androidDrawer});
+  const OptionTab({super.key, this.androidDrawer});
 
   final Widget? androidDrawer;
 
   @override
-  State<optionTabKey> createState() => _SongsTabState();
+  State<OptionTab> createState() => _OptionTabState();
 }
 
-class _SongsTabState extends State<optionTabKey> {
+class _OptionTabState extends State<OptionTab> {
   static const _itemsLength = 50;
 
   final _androidRefreshKey = GlobalKey<RefreshIndicatorState>();
@@ -124,7 +120,7 @@ class _SongsTabState extends State<optionTabKey> {
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(optionTabKey.title),
+        title: const Text(OptionTab.title),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -186,4 +182,8 @@ class _SongsTabState extends State<optionTabKey> {
       iosBuilder: _buildIos,
     );
   }
+}
+
+bool checkBluetoothStatus() {
+  return true;
 }
