@@ -5,8 +5,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter/services.dart' show PlatformException;
+import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart'; // show SignInOption;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -22,11 +26,10 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 // #enddocregion platform_imports
 
 class ConnectionsTab extends StatelessWidget {
+  const ConnectionsTab({Key? key}) : super(key: key);
   static const title = 'Social/Account Connections';
   static const androidIcon = Icon(Icons.link);
   static const iosIcon = Icon(CupertinoIcons.link);
-
-  const ConnectionsTab({super.key});
 
   Widget _buildBody(BuildContext context) {
     return Scaffold(
@@ -40,43 +43,39 @@ class ConnectionsTab extends StatelessWidget {
   // the profile tab as a button in the nav bar.
   // ===========================================================================
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text(title),
+        ),
+        body: Center(
+            child: ElevatedButton(
+                onPressed: () {
+                  signInWithGoogle();
+                },
+                child: Text('Login with Google'))));
+  }
+
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(title),
       ),
-      body: _buildBody(context), //calling buildbody
+      body: build(context), //calling buildbody
     );
   }
 
-  Widget _buildIos(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: SettingsTab.iosIcon,
-          onPressed: () {
-            // This pushes the settings page as a full page modal dialog on top
-            // of the tab bar and everything.
-            Navigator.of(context, rootNavigator: true).push<void>(
-              CupertinoPageRoute(
-                title: SettingsTab.title,
-                fullscreenDialog: true,
-                builder: (context) => const SettingsTab(),
-              ),
-            );
-          },
-        ),
-      ),
-      child: _buildBody(context),
-    );
-  }
+  signInWithGoogle() async {
+    GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
 
-  @override
-  Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos,
+    AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
     );
+    UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+    print(userCredential.user?.displayName);
   }
 }
