@@ -97,6 +97,7 @@ class _NewsTabState extends State<NewsTab> {
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        //drawer
         title: const Text(NewsTab.title),
       ),
       body: ListView.builder(

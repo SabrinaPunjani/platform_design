@@ -31,13 +31,6 @@ class ConnectionsTab extends StatelessWidget {
   static const androidIcon = Icon(Icons.link);
   static const iosIcon = Icon(CupertinoIcons.link);
 
-  Widget _buildBody(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('add strava login'), //being called below
-      ),
-    );
-  }
   // ===========================================================================
   // Non-shared code below because on iOS, the settings tab is nested inside of
   // the profile tab as a button in the nav bar.
@@ -46,9 +39,14 @@ class ConnectionsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(title),
-        ),
+        appBar: AppBar(title: const Text(title), actions: [
+          IconButton(
+              onPressed: () async {
+                await GoogleSignIn().signOut();
+                FirebaseAuth.instance.signOut();
+              },
+              icon: Icon(Icons.power_settings_new))
+        ]),
         body: Center(
             child: ElevatedButton(
                 onPressed: () {

@@ -10,6 +10,17 @@ import 'connections.dart';
 import 'settings_tab.dart';
 import 'homepage.dart';
 import 'widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter/services.dart' show PlatformException;
+import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart'; // show SignInOption;
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+import 'main.dart';
 
 void main() => runApp(const MyAdaptingApp());
 
@@ -137,6 +148,7 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
 }
 
 class _AndroidDrawer extends StatelessWidget {
+  //android drawer
   @override
   Widget build(BuildContext context) {
     return Drawer(
