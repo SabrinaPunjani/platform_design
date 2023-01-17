@@ -4,6 +4,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'HUD.dart';
 import 'connections.dart';
@@ -12,6 +13,19 @@ import 'homepage.dart';
 import 'widgets.dart';
 
 void main() => runApp(const MyAdaptingApp());
+
+// STYLE DEFINITIONS
+MaterialColor primarySwatch = Colors.blue;
+
+//! TODO - Fix this theme
+// TextTheme textTheme = GoogleFonts.interTextTheme(
+//     // Theme.of(context).textTheme.apply(fontSizeFactor: 0.9)),
+
+//     TextTheme(
+//   bodyText1: TextStyle(fontSize: 12.0),
+//   bodyText2: TextStyle(fontSize: 12.0),
+//   button: TextStyle(fontSize: 14.0),
+// ));
 
 class MyAdaptingApp extends StatelessWidget {
   const MyAdaptingApp({super.key});
@@ -22,11 +36,20 @@ class MyAdaptingApp extends StatelessWidget {
     // Apps.
     return MaterialApp(
       title: 'IceHawkAR Companion Application',
+      themeMode: ThemeMode.light, // Force light mode for now
       theme: ThemeData(
-        // color theme for Material widgets.
-        primarySwatch: Colors.deepPurple,
-      ),
-      darkTheme: ThemeData.dark(),
+          brightness: Brightness.light,
+          useMaterial3: true,
+          textTheme: GoogleFonts.interTextTheme(Theme.of(context)
+              .textTheme
+              .apply(fontSizeFactor: 0.95)), // Make fonts a slight bit smaller
+          fontFamily: 'Inter',
+          primarySwatch: primarySwatch),
+      darkTheme: ThemeData(
+          textTheme: GoogleFonts.interTextTheme(),
+          useMaterial3: true,
+          brightness: Brightness.dark,
+          primarySwatch: primarySwatch),
       builder: (context, child) {
         return CupertinoTheme(
           // Instead of letting Cupertino widgets auto-adapt to the Material
