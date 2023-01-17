@@ -15,14 +15,13 @@ import 'utils.dart';
 import 'widgets.dart';
 // import 'bluetooth/bluetooth-off-screen.dart';
 import 'dart:async';
-import 'dart:math';
 
 final FlutterBlue flutterBlue = FlutterBlue.instance;
 // enum BluetoothState { disabled, enabled, connected, disconnected, loading }
 final List<BluetoothDevice> devicesList = <BluetoothDevice>[];
 
 class OptionTab extends StatefulWidget {
-  static const title = 'Connect Glasses (Home?)';
+  static const title = 'Home';
   static const androidIcon = Icon(Icons.home);
   static const iosIcon = Icon(CupertinoIcons.home);
 
@@ -137,15 +136,26 @@ class _OptionTabState extends State<OptionTab> {
       ),
       drawer: widget.androidDrawer,
       body: Center(
-          child: ElevatedButton.icon(
-              icon: const Icon(
-                // <-- Icon
-                Icons.device_hub_outlined,
-                size: 24.0,
-              ),
-              onPressed: () {},
-              label: const Text(
-                  'Connect to Glasses'))), /*RefreshIndicator(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              'Not Connected',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            SizedBox(height: 10), // Column Padding
+            ElevatedButton.icon(
+                icon: const Icon(
+                  // <-- Icon
+                  Icons.device_hub_outlined,
+                  size: 24.0,
+                ),
+                onPressed: () {},
+                label: const Text('Connect to Glasses')),
+          ],
+        ),
+      ), /*RefreshIndicator(
         key: _androidRefreshKey,
         onRefresh: _refreshData,
         child: ListView.builder(
