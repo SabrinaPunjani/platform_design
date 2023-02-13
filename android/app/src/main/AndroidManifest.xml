@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dev.flutter.platform_design">
    <application
-        android:label="platform_design"
+        android:label="IceHawk AR"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

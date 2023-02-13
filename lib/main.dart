@@ -5,6 +5,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:platform_design/account.dart';
 
 import 'HUD.dart';
 import 'connections.dart';
@@ -209,6 +210,15 @@ class _AndroidDrawer extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Divider(),
+          ),
+          ListTile(
+            leading: AccountTab.androidIcon,
+            title: const Text(AccountTab.title),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push<void>(context,
+                  MaterialPageRoute(builder: (context) => const AccountTab()));
+            },
           ),
           ListTile(
             leading: SettingsTab.androidIcon,
