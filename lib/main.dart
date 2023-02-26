@@ -22,7 +22,7 @@ MaterialColor primarySwatch = Colors.blue;
 // TextTheme textTheme = GoogleFonts.interTextTheme(
 //     // Theme.of(context).textTheme.apply(fontSizeFactor: 0.9)),
 
-//     TextTheme(
+//TextTheme(
 //   bodyText1: TextStyle(fontSize: 12.0),
 //   bodyText2: TextStyle(fontSize: 12.0),
 //   button: TextStyle(fontSize: 14.0),

@@ -5,20 +5,23 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
-import 'package:flutter_blue/flutter_blue.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:flutter_blue/flutter_blue.dart';
+import 'package:platform_design/bluetooth/bluetooth-bonded-devices.dart';
+import 'package:platform_design/bluetooth/bluetooth-connect-serial.dart';
 import 'package:platform_design/main.dart';
 
+import 'bluetooth/bluetooth-connect.dart';
 import 'song_detail_tab.dart';
 import 'utils.dart';
 import 'widgets.dart';
 // import 'bluetooth/bluetooth-off-screen.dart';
 import 'dart:async';
 
-final FlutterBlue flutterBlue = FlutterBlue.instance;
+// final FlutterBlue flutterBlue = FlutterBlue.instance;
 // enum BluetoothState { disabled, enabled, connected, disconnected, loading }
-final List<BluetoothDevice> devicesList = <BluetoothDevice>[];
+// final List<BluetoothDevice> devicesList = <BluetoothDevice>[];
 
 class OptionTab extends StatefulWidget {
   static const title = 'Home';
@@ -34,10 +37,15 @@ class OptionTab extends StatefulWidget {
 }
 
 class _OptionTabState extends State<OptionTab> {
+  BluetoothState _bluetoothState = BluetoothState.UNKNOWN;
+
+  String bluetoothAddress = "...";
+  String bluetoothName = "...";
+
   static const _itemsLength = 1;
 
   final _androidRefreshKey = GlobalKey<RefreshIndicatorState>();
-
+  bool isScanning = false;
   late List<MaterialColor> colors;
   late List<String> songNames;
 
@@ -45,6 +53,64 @@ class _OptionTabState extends State<OptionTab> {
   void initState() {
     _setData();
     super.initState();
+
+    isScanning = widget.start;
+
+    if (isScanning) {
+      isScanning();
+    }
+    FlutterBluetoothSerial.instance.state.then((state) {
+      setState(() {
+        _bluetoothState = state;
+      });
+    });
+
+    Future.doWhile(() async {
+      // Wait if adapter not enabled
+      if ((await FlutterBluetoothSerial.instance.isEnabled) ?? false) {
+        return false;
+      }
+      await Future.delayed(Duration(milliseconds: 0xDD));
+      return true;
+    }).then((_) {
+      // print(FlutterBluetoothSerial.instance.getBondedDevices());
+      // Update the address field
+      FlutterBluetoothSerial.instance.address.then((address) {
+        setState(() {
+          bluetoothAddress = address!;
+        });
+      });
+    });
+
+    FlutterBluetoothSerial.instance
+        .getBondedDevices()
+        .then((devices) => {devices.map((device) => print(device.address))});
+
+    FlutterBluetoothSerial.instance.name.then((name) {
+      setState(() {
+        bluetoothName = name!;
+      });
+    });
+
+    FlutterBluetoothSerial.instance
+        .onStateChanged()
+        .listen((BluetoothState state) {
+      setState(() {
+        _bluetoothState = state;
+
+        // // Discoverable mode is disabled when Bluetooth gets disabled
+        // _discoverableTimeoutTimer = null;
+        // _discoverableTimeoutSecondsLeft = 0;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    FlutterBluetoothSerial.instance.setPairingRequestHandler(null);
+    // _collectingTask?.dispose();
+    // _discoverableTimeoutTimer?.cancel();
+    super.dispose();
   }
 
   void _setData() {
@@ -141,7 +207,7 @@ class _OptionTabState extends State<OptionTab> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              'Not Connected',
+              '${bluetoothAddress}: ${bluetoothName}',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             SizedBox(height: 10), // Column Padding
@@ -151,11 +217,59 @@ class _OptionTabState extends State<OptionTab> {
                   Icons.device_hub_outlined,
                   size: 24.0,
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  // Navigator.pop(context);
+                  Navigator.push<void>(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const DiscoveryPage()));
+                },
                 label: const Text('Connect to Glasses')),
+            ElevatedButton.icon(
+                icon: const Icon(
+                  // <-- Icon
+                  Icons.device_hub_outlined,
+                  size: 24.0,
+                ),
+                onPressed: () {
+                  // Navigator.pop(context);
+                  Navigator.push<void>(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => BluetoothConnect()));
+                },
+                label: const Text('Connect to Bluetooth')),
+            ElevatedButton.icon(
+                icon: const Icon(
+                  // <-- Icon
+                  Icons.device_hub_outlined,
+                  size: 24.0,
+                ),
+                onPressed: () {
+                  // Navigator.pop(context);
+                  Navigator.push<void>(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SelectBondedDevicePage()));
+                },
+                label: const Text('Show Bonded Devices')),
           ],
         ),
-      ), /*RefreshIndicator(
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(
+          Icons.bluetooth_connected_sharp,
+          color: Colors.white,
+          size: 29,
+        ),
+        backgroundColor: Colors.black,
+        tooltip: 'Capture Picture',
+        elevation: 5,
+        splashColor: Colors.grey,
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation
+          .centerFloat, /*RefreshIndicator(
         key: _androidRefreshKey,
         onRefresh: _refreshData,
         child: ListView.builder(

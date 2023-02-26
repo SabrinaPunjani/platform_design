@@ -5,3 +5,5 @@ enum SystemStatus {
   running, // Glasses are currently running
   loading, // Glasses are loading
 }
+
+const SettingsData = {};
