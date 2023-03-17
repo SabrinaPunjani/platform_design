@@ -10,7 +10,10 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 // import 'package:flutter_blue/flutter_blue.dart';
 import 'package:platform_design/bluetooth/bluetooth-bonded-devices.dart';
 import 'package:platform_design/bluetooth/bluetooth-connect-serial.dart';
+import 'package:platform_design/bluetooth/bluetooth-data.dart';
+import 'package:platform_design/bluetooth/bluetooth-fns.dart';
 import 'package:platform_design/main.dart';
+import 'package:platform_design/utils/definitions.dart';
 
 import 'bluetooth/bluetooth-connect.dart';
 import 'song_detail_tab.dart';
@@ -41,6 +44,8 @@ class _OptionTabState extends State<OptionTab> {
 
   String bluetoothAddress = "...";
   String bluetoothName = "...";
+  BluetoothDevice? connectedDevice = null;
+  SystemStatus status = SystemStatus.off;
 
   static const _itemsLength = 1;
 
@@ -53,6 +58,16 @@ class _OptionTabState extends State<OptionTab> {
   void initState() {
     _setData();
     super.initState();
+
+    getConnectedDevice().then((device) {
+      setState(() {
+        connectedDevice = device;
+        status = SystemStatus.connected;
+      });
+    }).catchError((e) {
+      connectedDevice = null;
+      status = SystemStatus.off;
+    });
 
     // isScanning = widget.start;
 
@@ -119,6 +134,11 @@ class _OptionTabState extends State<OptionTab> {
   }
 
   Future<void> _refreshData() {
+    getConnectedDevice().then((device) {
+      setState(() {
+        connectedDevice = device;
+      });
+    });
     return Future.delayed(
       // This is just an arbitrary delay that simulates some network activity.
       const Duration(seconds: 2),
@@ -206,8 +226,14 @@ class _OptionTabState extends State<OptionTab> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(
+              height: 80,
+              child: const Icon(Icons.bluetooth_connected, size: 64.0),
+            ),
             Text(
-              '${bluetoothAddress}: ${bluetoothName}',
+              connectedDevice != null
+                  ? ('Connected to ${connectedDevice?.name}')
+                  : ('Not Connected'),
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             SizedBox(height: 10), // Column Padding
@@ -218,11 +244,20 @@ class _OptionTabState extends State<OptionTab> {
                   size: 24.0,
                 ),
                 onPressed: () {
+                  if (status == SystemStatus.connected &&
+                      connectedDevice != null) {
+                    Navigator.push<void>(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                ChatPage(server: connectedDevice!)));
+                    return;
+                  }
                   // Navigator.pop(context);
-                  Navigator.push<void>(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const DiscoveryPage()));
+                  // Navigator.push<void>(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //         builder: (context) => const DiscoveryPage()));
                 },
                 label: const Text('Connect to Glasses')),
             ElevatedButton.icon(
@@ -257,9 +292,11 @@ class _OptionTabState extends State<OptionTab> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          _refreshData();
+        },
         child: Icon(
-          Icons.bluetooth_connected_sharp,
+          Icons.refresh,
           color: Colors.white,
           size: 29,
         ),

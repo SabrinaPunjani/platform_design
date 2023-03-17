@@ -6,6 +6,26 @@ import 'package:platform_design/bluetooth/bluetooth-data.dart';
 
 import 'bluetooth-device-list-entry.dart';
 
+// void getConnectedDevice() async {
+//   List<BluetoothDevice> devices = [];
+//   try {
+//     devices = await FlutterBluetoothSerial.instance.getBondedDevices();
+//   } catch (e) {
+//     print(e);
+//   }
+
+//   // Assuming only one device is connected
+//   BluetoothDevice device = devices[0];
+
+//   // Get the currently connected device by calling `BluetoothConnection.toAddress()`
+//   if (await device.isConnected) {
+//     String connectedDeviceAddress = await device.address;
+//     print(
+//         'Connected to (${device.name}) with address: $connectedDeviceAddress');
+//   } else {
+//     print('Not currently connected to any device');
+//   }
+// }
 // import './BluetoothDeviceListEntry.dart';
 
 class DiscoveryPage extends StatefulWidget {
@@ -26,8 +46,9 @@ class _DiscoveryPage extends State<DiscoveryPage> {
   _DiscoveryPage();
 
   @override
-  void initState() {
+  initState() {
     super.initState();
+    // getConnectedDevice();
 
     isScanning = widget.start;
     if (isScanning) {
