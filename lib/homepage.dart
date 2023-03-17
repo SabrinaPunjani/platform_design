@@ -54,11 +54,11 @@ class _OptionTabState extends State<OptionTab> {
     _setData();
     super.initState();
 
-    isScanning = widget.start;
+    // isScanning = widget.start;
 
-    if (isScanning) {
-      isScanning();
-    }
+    // if (isScanning) {
+    //   isScanning();
+    // }
     FlutterBluetoothSerial.instance.state.then((state) {
       setState(() {
         _bluetoothState = state;
