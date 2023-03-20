@@ -11,9 +11,9 @@ import 'utils.dart';
 import 'widgets.dart';
 
 class NewsTab extends StatefulWidget {
-  static const title = 'HUD Layout';
-  static const androidIcon = Icon(Icons.bolt);
-  static const iosIcon = Icon(CupertinoIcons.bolt);
+  static const title = 'Settings';
+  static const androidIcon = Icon(Icons.settings);
+  static const iosIcon = Icon(CupertinoIcons.gear);
 
   const NewsTab({super.key});
 

@@ -117,8 +117,8 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
             icon: OptionTab.iosIcon,
           ),
           BottomNavigationBarItem(
-            label: NewsTab.title,
-            icon: NewsTab.iosIcon,
+            label: SettingsTab.title,
+            icon: SettingsTab.iosIcon,
           ),
           BottomNavigationBarItem(
             label: ConnectionsTab.title,
@@ -135,8 +135,8 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
             );
           case 1:
             return CupertinoTabView(
-              defaultTitle: NewsTab.title,
-              builder: (context) => const NewsTab(),
+              defaultTitle: SettingsTab.title,
+              builder: (context) => const SettingsTab(),
             );
           case 2:
             return CupertinoTabView(
@@ -187,12 +187,12 @@ class _AndroidDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: NewsTab.androidIcon,
-            title: const Text(NewsTab.title),
+            leading: SettingsTab.androidIcon,
+            title: const Text(SettingsTab.title),
             onTap: () {
               Navigator.pop(context);
               Navigator.push<void>(context,
-                  MaterialPageRoute(builder: (context) => const NewsTab()));
+                  MaterialPageRoute(builder: (context) => const SettingsTab()));
             },
           ),
           ListTile(
@@ -221,12 +221,12 @@ class _AndroidDrawer extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: SettingsTab.androidIcon,
-            title: const Text(SettingsTab.title),
+            leading: NewsTab.androidIcon,
+            title: const Text(NewsTab.title),
             onTap: () {
               Navigator.pop(context);
               Navigator.push<void>(context,
-                  MaterialPageRoute(builder: (context) => const SettingsTab()));
+                  MaterialPageRoute(builder: (context) => const NewsTab()));
             },
           ),
         ],

@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 import 'widgets.dart';
 
 class SettingsTab extends StatefulWidget {
-  static const title = 'Settings';
-  static const androidIcon = Icon(Icons.settings);
-  static const iosIcon = Icon(CupertinoIcons.gear);
+  static const title = 'HUD Layout';
+  static const androidIcon = Icon(Icons.bolt);
+  static const iosIcon = Icon(CupertinoIcons.bolt);
 
   const SettingsTab({super.key});
 
