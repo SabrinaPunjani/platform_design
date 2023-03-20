@@ -19,99 +19,45 @@ class SettingsTab extends StatefulWidget {
 }
 
 class _SettingsTabState extends State<SettingsTab> {
-  var switch1 = false;
-  var switch2 = true;
-  var switch3 = true;
-  var switch4 = true;
-  var switch5 = true;
-  var switch6 = false;
-  var switch7 = true;
+  var weather = false;
+  var biometrics = false;
+  var blindspot = false;
+  var bikestats = false;
 
   Widget _buildList() {
     return ListView(
       children: [
         const Padding(padding: EdgeInsets.only(top: 24)),
         ListTile(
-          title:
-              const Text('Download on Data (default download only on Wi-Fi)'),
+          title: const Text('Weather'),
           // The Material switch has a platform adaptive constructor.
           trailing: Switch.adaptive(
-            value: switch1,
-            onChanged: (value) => setState(() => switch1 = value),
+            value: weather,
+            onChanged: (value) => setState(() => weather = value),
           ),
         ),
         ListTile(
-          title: const Text('Whatever random setting toggle idk'),
+          title: const Text('Biometrics'),
           // The Material switch has a platform adaptive constructor.
           trailing: Switch.adaptive(
-            value: switch1,
-            onChanged: (value) => setState(() => switch1 = value),
+            value: biometrics,
+            onChanged: (value) => setState(() => biometrics = value),
           ),
         ),
         ListTile(
-          title: const Text('Follow System Default Dark/Light Mode'),
+          title: const Text('Bike Stats (Speed, Distance, Wattage, Cadence)'),
           // The Material switch has a platform adaptive constructor.
           trailing: Switch.adaptive(
-            value: switch1,
-            onChanged: (value) => setState(() => switch1 = value),
+            value: bikestats,
+            onChanged: (value) => setState(() => bikestats = value),
           ),
         ),
         ListTile(
-          title: const Text('Dark Mode'),
+          title: const Text('Blindspot Detection'),
           // The Material switch has a platform adaptive constructor.
           trailing: Switch.adaptive(
-            value: switch1,
-            onChanged: (value) => setState(() => switch1 = value),
-          ),
-        ),
-        ListTile(
-          title: const Text('Send me marketing emails'),
-          // The Material switch has a platform adaptive constructor.
-          trailing: Switch.adaptive(
-            value: switch1,
-            onChanged: (value) => setState(() => switch1 = value),
-          ),
-        ),
-        ListTile(
-          title: const Text('Enable notifications'),
-          trailing: Switch.adaptive(
-            value: switch2,
-            onChanged: (value) => setState(() => switch2 = value),
-          ),
-        ),
-        ListTile(
-          title: const Text('Remind me to rate this app'),
-          trailing: Switch.adaptive(
-            value: switch3,
-            onChanged: (value) => setState(() => switch3 = value),
-          ),
-        ),
-        ListTile(
-          title: const Text('Background song refresh'),
-          trailing: Switch.adaptive(
-            value: switch4,
-            onChanged: (value) => setState(() => switch4 = value),
-          ),
-        ),
-        ListTile(
-          title: const Text('Recommend me songs based on my location'),
-          trailing: Switch.adaptive(
-            value: switch5,
-            onChanged: (value) => setState(() => switch5 = value),
-          ),
-        ),
-        ListTile(
-          title: const Text('Auto-transition playback to cast devices'),
-          trailing: Switch.adaptive(
-            value: switch6,
-            onChanged: (value) => setState(() => switch6 = value),
-          ),
-        ),
-        ListTile(
-          title: const Text('Find friends from my contact list'),
-          trailing: Switch.adaptive(
-            value: switch7,
-            onChanged: (value) => setState(() => switch7 = value),
+            value: blindspot,
+            onChanged: (value) => setState(() => blindspot = value),
           ),
         ),
       ],
