@@ -13,6 +13,8 @@ import 'package:platform_design/bluetooth/bluetooth-connect-serial.dart';
 import 'package:platform_design/bluetooth/bluetooth-data.dart';
 import 'package:platform_design/bluetooth/bluetooth-fns.dart';
 import 'package:platform_design/main.dart';
+import 'package:platform_design/settings_tab.dart';
+import 'package:platform_design/utils/api.dart';
 import 'package:platform_design/utils/definitions.dart';
 
 import 'bluetooth/bluetooth-connect.dart';
@@ -253,41 +255,60 @@ class _OptionTabState extends State<OptionTab> {
                                 ChatPage(server: connectedDevice!)));
                     return;
                   }
-                  // Navigator.pop(context);
-                  // Navigator.push<void>(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //         builder: (context) => const DiscoveryPage()));
                 },
                 label: const Text('Connect to Glasses')),
+
             ElevatedButton.icon(
                 icon: const Icon(
                   // <-- Icon
                   Icons.device_hub_outlined,
                   size: 24.0,
                 ),
-                onPressed: () {
-                  // Navigator.pop(context);
-                  Navigator.push<void>(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BluetoothConnect()));
+                onPressed: () async {
+                  try {
+                    Map<String, dynamic> data = await fetchWeatherData();
+                    print(data);
+                  } catch (e) {}
+
+                  // if (status == SystemStatus.connected &&
+                  //     connectedDevice != null) {
+                  //   Navigator.push<void>(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //           builder: (context) =>
+                  //               ChatPage(server: connectedDevice!)));
+                  //   return;
+                  // }
                 },
-                label: const Text('Connect to Bluetooth')),
-            ElevatedButton.icon(
-                icon: const Icon(
-                  // <-- Icon
-                  Icons.device_hub_outlined,
-                  size: 24.0,
-                ),
-                onPressed: () {
-                  // Navigator.pop(context);
-                  Navigator.push<void>(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SelectBondedDevicePage()));
-                },
-                label: const Text('Show Bonded Devices')),
+                label: const Text('Get Weather')),
+            // ElevatedButton.icon(
+            //     icon: const Icon(
+            //       // <-- Icon
+            //       Icons.device_hub_outlined,
+            //       size: 24.0,
+            //     ),
+            //     onPressed: () {
+            //       // Navigator.pop(context);
+            //       Navigator.push<void>(
+            //           context,
+            //           MaterialPageRoute(
+            //               builder: (context) => BluetoothConnect()));
+            //     },
+            //     label: const Text('Connect to Bluetooth')),
+            // ElevatedButton.icon(
+            //     icon: const Icon(
+            //       // <-- Icon
+            //       Icons.device_hub_outlined,
+            //       size: 24.0,
+            //     ),
+            //     onPressed: () {
+            //       // Navigator.pop(context);
+            //       Navigator.push<void>(
+            //           context,
+            //           MaterialPageRoute(
+            //               builder: (context) => SelectBondedDevicePage()));
+            //     },
+            //     label: const Text('Show Bonded Devices')),
           ],
         ),
       ),

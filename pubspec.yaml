@@ -41,6 +41,11 @@ dependencies:
   google_fonts: ^3.0.1
   flutter_blue: ^0.8.0
   flutter_bluetooth_serial: ^0.4.0
+  http: ^0.13.5
+  flutter_web_auth: ^0.5.0
+  url_launcher: ^6.1.10
+  geolocator: ^9.0.2
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

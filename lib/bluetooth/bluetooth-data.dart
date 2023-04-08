@@ -5,6 +5,18 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
+const testJSON = {
+  "hud_toggles": {
+    "blindspot": true,
+    "biometrics": true,
+    "weather": true,
+    "bike_stats": true,
+  },
+  "weather": {"temperature": 21, "wind_speed": 5, "condition": "sunny"}
+};
+
+String jsonStr = jsonEncode(testJSON);
+
 class ChatPage extends StatefulWidget {
   final BluetoothDevice server;
 
@@ -218,7 +230,9 @@ class _ChatPage extends State<ChatPage> {
 
     if (text.length > 0) {
       try {
-        connection!.output.add(Uint8List.fromList(utf8.encode(text + "\r\n")));
+        // FOR TESTING!
+        connection!.output.add(Uint8List.fromList(utf8.encode(jsonStr)));
+        // connection!.output.add(Uint8List.fromList(utf8.encode(text + "\r\n")));
         await connection!.output.allSent;
 
         setState(() {

@@ -13,7 +13,7 @@ import 'settings_tab.dart';
 import 'homepage.dart';
 import 'widgets.dart';
 
-void main() => runApp(const MyAdaptingApp());
+void main() => runApp(const MyApp());
 
 // STYLE DEFINITIONS
 MaterialColor primarySwatch = Colors.blue;
@@ -28,8 +28,8 @@ MaterialColor primarySwatch = Colors.blue;
 //   button: TextStyle(fontSize: 14.0),
 // ));
 
-class MyAdaptingApp extends StatelessWidget {
-  const MyAdaptingApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(context) {
