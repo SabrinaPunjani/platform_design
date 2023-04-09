@@ -65,13 +65,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-// Shows a different type of scaffold depending on the platform.
-//
-// This file has the most amount of non-sharable code since it behaves the most
-// differently between the platforms.
-//
-// These differences are also subjective and have more than one 'right' answer
-// depending on the app and content.
 class PlatformAdaptingHomePage extends StatefulWidget {
   const PlatformAdaptingHomePage({super.key});
 
@@ -108,55 +101,61 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
   // for this, the app folds its fourth tab (the settings page) into the
   // third tab. This is a common pattern on iOS.
 
-  Widget _buildIosHomePage(BuildContext context) {
-    return CupertinoTabScaffold(
-      tabBar: CupertinoTabBar(
-        items: const [
-          BottomNavigationBarItem(
-            label: OptionTab.title,
-            icon: OptionTab.iosIcon,
-          ),
-          BottomNavigationBarItem(
-            label: SettingsTab.title,
-            icon: SettingsTab.iosIcon,
-          ),
-          BottomNavigationBarItem(
-            label: ConnectionsTab.title,
-            icon: ConnectionsTab.iosIcon,
-          ),
-        ],
-      ),
-      tabBuilder: (context, index) {
-        switch (index) {
-          case 0:
-            return CupertinoTabView(
-              defaultTitle: OptionTab.title,
-              builder: (context) => OptionTab(key: optionTabKey),
-            );
-          case 1:
-            return CupertinoTabView(
-              defaultTitle: SettingsTab.title,
-              builder: (context) => const SettingsTab(),
-            );
-          case 2:
-            return CupertinoTabView(
-              defaultTitle: ConnectionsTab.title,
-              builder: (context) => const ConnectionsTab(),
-            );
-          default:
-            assert(false, 'Unexpected tab');
-            return const SizedBox.shrink();
-        }
-      },
-    );
+  // Widget _buildIosHomePage(BuildContext context) {
+  //   return CupertinoTabScaffold(
+  //     tabBar: CupertinoTabBar(
+  //       items: const [
+  //         BottomNavigationBarItem(
+  //           label: OptionTab.title,
+  //           icon: OptionTab.iosIcon,
+  //         ),
+  //         BottomNavigationBarItem(
+  //           label: SettingsTab.title,
+  //           icon: SettingsTab.iosIcon,
+  //         ),
+  //         BottomNavigationBarItem(
+  //           label: ConnectionsTab.title,
+  //           icon: ConnectionsTab.iosIcon,
+  //         ),
+  //       ],
+  //     ),
+  //     tabBuilder: (context, index) {
+  //       switch (index) {
+  //         case 0:
+  //           return CupertinoTabView(
+  //             defaultTitle: OptionTab.title,
+  //             builder: (context) => OptionTab(key: optionTabKey),
+  //           );
+  //         case 1:
+  //           return CupertinoTabView(
+  //             defaultTitle: SettingsTab.title,
+  //             builder: (context) => const SettingsTab(),
+  //           );
+  //         case 2:
+  //           return CupertinoTabView(
+  //             defaultTitle: ConnectionsTab.title,
+  //             builder: (context) => const ConnectionsTab(),
+  //           );
+  //         default:
+  //           assert(false, 'Unexpected tab');
+  //           return const SizedBox.shrink();
+  //       }
+  //     },
+  //   );
+  // }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
   Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroidHomePage,
-      iosBuilder: _buildIosHomePage,
-    );
+    // return PlatformWidget(
+    //   androidBuilder: _buildAndroidHomePage,
+    //   // iosBuilder: _buildIosHomePage,
+    // );
+    return _buildAndroidHomePage(context);
   }
 }
 
@@ -234,35 +233,3 @@ class _AndroidDrawer extends StatelessWidget {
     );
   }
 }
-// class BluetoothOffScreen extends StatelessWidget {
-//   const BluetoothOffScreen({Key? key, this.state}) : super(key: key);
-
-//   final BluetoothState? state;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.lightBlue,
-//       body: Center(
-//         child: Column(
-//           // mainAxisSize: MainAxisSize.min,
-//           children: <Widget>[
-//             const Icon(
-//               Icons.bluetooth_disabled,
-//               size: 200.0,
-//               color: Colors.white54,
-//             ),
-//             Text(
-//               'Bluetooth Adapter is ${state != null ? state.toString().substring(15) : 'not available'}.',
-//               style: Theme.of(context)
-//                   .primaryTextTheme
-//                   .subtitle1
-//                   ?.copyWith(color: Colors.white),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-

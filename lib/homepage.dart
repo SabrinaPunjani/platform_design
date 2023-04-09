@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
@@ -12,21 +13,24 @@ import 'package:platform_design/bluetooth/bluetooth-bonded-devices.dart';
 import 'package:platform_design/bluetooth/bluetooth-connect-serial.dart';
 import 'package:platform_design/bluetooth/bluetooth-data.dart';
 import 'package:platform_design/bluetooth/bluetooth-fns.dart';
+import 'package:platform_design/components/display-weather.dart';
+import 'package:platform_design/components/weather-fetcher.dart';
+import 'package:platform_design/control-panel.dart';
 import 'package:platform_design/main.dart';
 import 'package:platform_design/settings_tab.dart';
 import 'package:platform_design/utils/api.dart';
 import 'package:platform_design/utils/definitions.dart';
 
 import 'bluetooth/bluetooth-connect.dart';
-import 'song_detail_tab.dart';
+import 'components/timer-button.dart';
 import 'utils.dart';
-import 'widgets.dart';
-// import 'bluetooth/bluetooth-off-screen.dart';
 import 'dart:async';
 
-// final FlutterBlue flutterBlue = FlutterBlue.instance;
-// enum BluetoothState { disabled, enabled, connected, disconnected, loading }
-// final List<BluetoothDevice> devicesList = <BluetoothDevice>[];
+var template = {
+  "timer": false,
+  "weather": null,
+  "hud_toggles": null,
+};
 
 class OptionTab extends StatefulWidget {
   static const title = 'Home';
@@ -47,11 +51,14 @@ class _OptionTabState extends State<OptionTab> {
   String bluetoothAddress = "...";
   String bluetoothName = "...";
   BluetoothDevice? connectedDevice = null;
+  BluetoothConnection? conn = null;
   SystemStatus status = SystemStatus.off;
+
+  Map<String, dynamic> weather = {};
+  bool timer = false;
 
   static const _itemsLength = 1;
 
-  final _androidRefreshKey = GlobalKey<RefreshIndicatorState>();
   bool isScanning = false;
   late List<MaterialColor> colors;
   late List<String> songNames;
@@ -71,11 +78,6 @@ class _OptionTabState extends State<OptionTab> {
       status = SystemStatus.off;
     });
 
-    // isScanning = widget.start;
-
-    // if (isScanning) {
-    //   isScanning();
-    // }
     FlutterBluetoothSerial.instance.state.then((state) {
       setState(() {
         _bluetoothState = state;
@@ -148,79 +150,25 @@ class _OptionTabState extends State<OptionTab> {
     );
   }
 
-  Widget _listBuilder(BuildContext context, int index) {
-    if (index >= _itemsLength) return Container();
-
-    // Show a slightly different color palette. Show poppy-ier colors on iOS
-    // due to lighter contrasting bars and tone it down on Android.
-    final color = defaultTargetPlatform == TargetPlatform.iOS
-        ? colors[index]
-        : colors[index].shade400;
-
-    return SafeArea(
-      top: false,
-      bottom: false,
-      child: Hero(
-        tag: index,
-        child: HeroAnimatingSongCard(
-          song: songNames[index],
-          color: color,
-          heroAnimation: const AlwaysStoppedAnimation(0),
-          onPressed: () => Navigator.of(context).push<void>(
-            MaterialPageRoute(
-              builder: (context) => SongDetailTab(
-                id: index,
-                song: songNames[index],
-                color: color,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+  void handleWeatherUpdate(weatherData) {
+    // print("yo\n");
+    // print({: weatherData});
+    bluetoothSend(conn, jsonEncode({"weather": weatherData}));
+    setState(() {
+      weather = weatherData;
+    });
   }
 
-  void _togglePlatform() {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      debugDefaultTargetPlatformOverride = TargetPlatform.android;
-    } else {
-      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    }
-
-    // This rebuilds the application. This should obviously never be
-    // done in a real app but it's done here since this app
-    // unrealistically toggles the current platform for demonstration
-    // purposes.
-    WidgetsBinding.instance.reassembleApplication();
+  void handleStartTimerUpdate(start) {
+    setState(() {
+      timer = start;
+    });
   }
-
-  // ===========================================================================
-  // Non-shared code below because:
-  // - Android and iOS have different scaffolds
-  // - There are different items in the app bar / nav bar
-  // - Android has a hamburger drawer, iOS has bottom tabs
-  // - The iOS nav bar is scrollable, Android is not
-  // - Pull-to-refresh works differently, and Android has a button to trigger it too
-  //
-  // And these are all design time choices that doesn't have a single 'right'
-  // answer.
-  // ===========================================================================
 
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(OptionTab.title),
-        /*actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () async =>
-                await _androidRefreshKey.currentState!.show(),
-          ),
-          IconButton(
-            icon: const Icon(Icons.shuffle),
-            onPressed: _togglePlatform,
-          ),
-        ],*/
       ),
       drawer: widget.androidDrawer,
       body: Center(
@@ -257,58 +205,43 @@ class _OptionTabState extends State<OptionTab> {
                   }
                 },
                 label: const Text('Connect to Glasses')),
+            ElevatedButton.icon(
+                icon: const Icon(
+                  // <-- Icon
+                  Icons.apps_outlined,
+                  size: 24.0,
+                ),
+                onPressed: () {
+                  Navigator.push<void>(context,
+                      MaterialPageRoute(builder: (context) => ControlPanel()));
+                  return;
+                },
+                label: const Text('Control Glasses')),
 
             ElevatedButton.icon(
                 icon: const Icon(
                   // <-- Icon
-                  Icons.device_hub_outlined,
+                  Icons.sunny,
                   size: 24.0,
                 ),
                 onPressed: () async {
                   try {
                     Map<String, dynamic> data = await fetchWeatherData();
-                    print(data);
-                  } catch (e) {}
 
-                  // if (status == SystemStatus.connected &&
-                  //     connectedDevice != null) {
-                  //   Navigator.push<void>(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //           builder: (context) =>
-                  //               ChatPage(server: connectedDevice!)));
-                  //   return;
-                  // }
+                    setState(() {
+                      weather = data;
+                    });
+                    // print(weather);
+                  } catch (e) {}
                 },
                 label: const Text('Get Weather')),
-            // ElevatedButton.icon(
-            //     icon: const Icon(
-            //       // <-- Icon
-            //       Icons.device_hub_outlined,
-            //       size: 24.0,
-            //     ),
-            //     onPressed: () {
-            //       // Navigator.pop(context);
-            //       Navigator.push<void>(
-            //           context,
-            //           MaterialPageRoute(
-            //               builder: (context) => BluetoothConnect()));
-            //     },
-            //     label: const Text('Connect to Bluetooth')),
-            // ElevatedButton.icon(
-            //     icon: const Icon(
-            //       // <-- Icon
-            //       Icons.device_hub_outlined,
-            //       size: 24.0,
-            //     ),
-            //     onPressed: () {
-            //       // Navigator.pop(context);
-            //       Navigator.push<void>(
-            //           context,
-            //           MaterialPageRoute(
-            //               builder: (context) => SelectBondedDevicePage()));
-            //     },
-            //     label: const Text('Show Bonded Devices')),
+            TimerButton(),
+            WeatherFetcher(setWeather: handleWeatherUpdate),
+            weather.isNotEmpty
+                ? DisplayWeather(
+                    setWeather: handleWeatherUpdate,
+                    weatherJson: jsonEncode(weather))
+                : SizedBox.shrink()
           ],
         ),
       ),
@@ -339,41 +272,9 @@ class _OptionTabState extends State<OptionTab> {
     );
   }
 
-  Widget _buildIos(BuildContext context) {
-    return CustomScrollView(
-      slivers: [
-        CupertinoSliverNavigationBar(
-          trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: _togglePlatform,
-            child: const Icon(CupertinoIcons.shuffle),
-          ),
-        ),
-        CupertinoSliverRefreshControl(
-          onRefresh: _refreshData,
-        ),
-        SliverSafeArea(
-          top: false,
-          sliver: SliverPadding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                _listBuilder,
-                childCount: _itemsLength,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos,
-    );
+    return _buildAndroid(context);
   }
 }
 

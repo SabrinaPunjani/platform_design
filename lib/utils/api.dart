@@ -27,7 +27,7 @@ Future<Map<String, dynamic>> fetchWeatherData() async {
 
     // Send the HTTP request
     final response = await http.get(Uri.parse(apiUrl));
-    print(response.statusCode);
+    // print(response.statusCode);
     // Check if the request was successful
     if (response.statusCode == 200) {
       final results = jsonDecode(response.body)["results"][0];
@@ -44,7 +44,7 @@ Future<Map<String, dynamic>> fetchWeatherData() async {
         "relativeHumidity": results["relativeHumidity"],
         "wind": results["wind"],
       };
-      // print(data);
+      print("[Weather] Data fetched: $data");
       return data;
     } else {
       throw Exception('Failed to load weather data');
