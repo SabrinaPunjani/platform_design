@@ -55,6 +55,15 @@ class _OptionTabState extends State<OptionTab> {
   double altitude = 0;
   String timer = 'stop';
 
+  var hudToggles = {
+    "weather": false,
+    "biometrics": false,
+    "blindspot": false,
+    "bike_stats": false,
+    "timer": false,
+    "altitude": false,
+  };
+
   bool isScanning = false;
 
   @override
@@ -200,21 +209,6 @@ class _OptionTabState extends State<OptionTab> {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             SizedBox(height: 10), // Column Padding
-            ElevatedButton.icon(
-                icon: const Icon(
-                  // <-- Icon
-                  Icons.device_hub_outlined,
-                  size: 24.0,
-                ),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => DiscoveryPage(
-                                onConnect: _onConnect,
-                              )));
-                },
-                label: const Text('Connect to Glasses')),
             conn?.isConnected == true
                 ? ElevatedButton.icon(
                     icon: const Icon(
@@ -226,23 +220,38 @@ class _OptionTabState extends State<OptionTab> {
                       conn?.dispose();
                     },
                     label: const Text('Disconnect from Glasses'))
-                : SizedBox.shrink(),
-            connectedDevice?.isConnected == true
-                ? ElevatedButton.icon(
+                : ElevatedButton.icon(
                     icon: const Icon(
                       // <-- Icon
-                      Icons.apps_outlined,
+                      Icons.device_hub_outlined,
                       size: 24.0,
                     ),
                     onPressed: () {
-                      Navigator.push<void>(
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ControlPanel()));
-                      return;
+                              builder: (context) => DiscoveryPage(
+                                    onConnect: _onConnect,
+                                  )));
                     },
-                    label: const Text('Control Glasses'))
-                : SizedBox.shrink(),
+                    label: const Text('Connect to Glasses')),
+            // connectedDevice?.isConnected == true
+            //     ? ElevatedButton.icon(
+            //         icon: const Icon(
+            //           // <-- Icon
+            //           Icons.apps_outlined,
+            //           size: 24.0,
+            //         ),
+            //         onPressed: () {
+            //           Navigator.push<void>(
+            //               context,
+            //               MaterialPageRoute(
+            //                   builder: (context) => ControlPanel()));
+            //           return;
+            //         },
+            //         label: const Text('Control Glasses'))
+            //     : SizedBox.shrink(),
+            SizedBox(height: 32), // Column Padding
             TimerButton(onTimerUpdate: handleTimerUpdate),
             WeatherFetcher(setWeather: handleWeatherUpdate),
             weather.isNotEmpty
