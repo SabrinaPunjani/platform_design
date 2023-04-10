@@ -224,12 +224,6 @@ class _OptionTabState extends State<OptionTab> {
                     ),
                     onPressed: () {
                       conn?.dispose();
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => DiscoveryPage(
-                      //               onConnect: _onConnect,
-                      //             )));
                     },
                     label: const Text('Disconnect from Glasses'))
                 : SizedBox.shrink(),
@@ -249,44 +243,6 @@ class _OptionTabState extends State<OptionTab> {
                     },
                     label: const Text('Control Glasses'))
                 : SizedBox.shrink(),
-
-            // ElevatedButton.icon(
-            //     icon: const Icon(
-            //       // <-- Icon
-            //       Icons.sunny,
-            //       size: 24.0,
-            //     ),
-            //     onPressed: () async {
-            //       try {
-            //         Map<String, dynamic> data = await fetchWeatherData();
-
-            //         setState(() {
-            //           weather = data;
-            //         });
-            //         // print(weather);
-            //       } catch (e) {}
-            //     },
-            //     label: const Text('Get Weather')),
-            ElevatedButton.icon(
-                icon: const Icon(
-                  // <-- Icon
-                  Icons.sunny,
-                  size: 24.0,
-                ),
-                onPressed: () async {
-                  try {
-                    double altitudeData = await fetchAltitudeData();
-                    _setAltitude(altitudeData);
-
-                    // Map<String, dynamic> data = await fetchWeatherData();
-
-                    // setState(() {
-                    //   weather = data;
-                    // });
-                    // print(weather);
-                  } catch (e) {}
-                },
-                label: const Text('Get Altitude')),
             TimerButton(onTimerUpdate: handleTimerUpdate),
             WeatherFetcher(setWeather: handleWeatherUpdate),
             weather.isNotEmpty
