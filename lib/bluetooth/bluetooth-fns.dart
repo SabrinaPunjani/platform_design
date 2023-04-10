@@ -7,6 +7,7 @@ Map<String, dynamic> template = {
   "timer": null,
   "weather": null,
   "hud_toggles": null,
+  "altitude": null, // number in meters
 };
 // Returns the connected device.
 Future<BluetoothDevice?> getConnectedDevice() async {
@@ -44,7 +45,7 @@ Future<bool> bluetoothSend(BluetoothConnection? connection, String txt) async {
       ...jsonDecode(txt),
     };
 
-    print("[Bluetooth Comm]: Sending packet = $packet");
+    print("[Bluetooth Comm] Sending packet = $packet");
     if (connection == null) {
       print("[Bluetooth Comm] Connection not established");
       return false;

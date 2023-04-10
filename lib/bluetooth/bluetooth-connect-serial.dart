@@ -32,7 +32,8 @@ import 'bluetooth-device-list-entry.dart';
 class DiscoveryPage extends StatefulWidget {
   /// If true, discovery starts on page start, otherwise user must press action button.
   final bool start;
-  const DiscoveryPage({this.start = true});
+  final onConnect;
+  const DiscoveryPage({this.start = true, this.onConnect});
 
   @override
   _DiscoveryPage createState() => new _DiscoveryPage();

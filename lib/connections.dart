@@ -134,34 +134,9 @@ class ConnectionsTab extends StatelessWidget {
     );
   }
 
-  Widget _buildIos(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        trailing: CupertinoButton(
-          padding: EdgeInsets.zero,
-          child: SettingsTab.iosIcon,
-          onPressed: () {
-            // This pushes the settings page as a full page modal dialog on top
-            // of the tab bar and everything.
-            Navigator.of(context, rootNavigator: true).push<void>(
-              CupertinoPageRoute(
-                title: SettingsTab.title,
-                fullscreenDialog: true,
-                builder: (context) => const SettingsTab(),
-              ),
-            );
-          },
-        ),
-      ),
-      child: _buildBody(context),
-    );
-  }
 
   @override
   Widget build(context) {
-    return PlatformWidget(
-      androidBuilder: _buildAndroid,
-      iosBuilder: _buildIos,
-    );
+    return _buildAndroid(context);
   }
 }

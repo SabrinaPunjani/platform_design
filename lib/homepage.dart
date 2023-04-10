@@ -9,21 +9,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 // import 'package:flutter_blue/flutter_blue.dart';
-import 'package:platform_design/bluetooth/bluetooth-bonded-devices.dart';
 import 'package:platform_design/bluetooth/bluetooth-connect-serial.dart';
-import 'package:platform_design/bluetooth/bluetooth-data.dart';
 import 'package:platform_design/bluetooth/bluetooth-fns.dart';
+import 'package:platform_design/components/altitude-widget.dart';
 import 'package:platform_design/components/display-weather.dart';
 import 'package:platform_design/components/weather-fetcher.dart';
 import 'package:platform_design/control-panel.dart';
-import 'package:platform_design/main.dart';
-import 'package:platform_design/settings_tab.dart';
 import 'package:platform_design/utils/api.dart';
 import 'package:platform_design/utils/definitions.dart';
 
-import 'bluetooth/bluetooth-connect.dart';
 import 'components/timer-button.dart';
-import 'utils.dart';
 import 'dart:async';
 
 var template = {
@@ -50,11 +45,14 @@ class _OptionTabState extends State<OptionTab> {
 
   String bluetoothAddress = "...";
   String bluetoothName = "...";
+
   BluetoothDevice? connectedDevice = null;
   BluetoothConnection? conn = null;
+
   SystemStatus status = SystemStatus.off;
 
   Map<String, dynamic> weather = {};
+  double altitude = 0;
   bool timer = false;
 
   static const _itemsLength = 1;
@@ -65,7 +63,6 @@ class _OptionTabState extends State<OptionTab> {
 
   @override
   void initState() {
-    _setData();
     super.initState();
 
     getConnectedDevice().then((device) {
@@ -73,6 +70,15 @@ class _OptionTabState extends State<OptionTab> {
         connectedDevice = device;
         status = SystemStatus.connected;
       });
+
+      // set connection
+      BluetoothConnection.toAddress(connectedDevice?.address).then((_connection) {
+        setState(() {
+          conn = _connection;
+        });
+      });
+
+
     }).catchError((e) {
       connectedDevice = null;
       status = SystemStatus.off;
@@ -127,27 +133,21 @@ class _OptionTabState extends State<OptionTab> {
   @override
   void dispose() {
     FlutterBluetoothSerial.instance.setPairingRequestHandler(null);
-    // _collectingTask?.dispose();
-    // _discoverableTimeoutTimer?.cancel();
     super.dispose();
   }
 
-  void _setData() {
-    colors = getRandomColors(_itemsLength);
-    songNames = getRandomNames(_itemsLength);
-  }
-
-  Future<void> _refreshData() {
+  void _refreshData() {
     getConnectedDevice().then((device) {
       setState(() {
         connectedDevice = device;
       });
     });
-    return Future.delayed(
-      // This is just an arbitrary delay that simulates some network activity.
-      const Duration(seconds: 2),
-      () => setState(() => _setData()),
-    );
+    return;
+    // return Future.delayed(
+    //   // This is just an arbitrary delay that simulates some network activity.
+    //   const Duration(seconds: 2),
+    //   () => setState(() => _setData()),
+    // );
   }
 
   void handleWeatherUpdate(weatherData) {
@@ -159,10 +159,19 @@ class _OptionTabState extends State<OptionTab> {
     });
   }
 
-  void handleStartTimerUpdate(start) {
+  void handleStartTimerUpdate(status) {
     setState(() {
-      timer = start;
+      timer = status;
     });
+  }
+
+  void handleHudToggle(hudData) {}
+
+  void _setAltitude(double _altitude) {
+    setState(() {
+      altitude = _altitude;
+    });
+    bluetoothSend(conn, jsonEncode({"altitude": altitude}));
   }
 
   Widget _buildAndroid(BuildContext context) {
@@ -173,11 +182,11 @@ class _OptionTabState extends State<OptionTab> {
       drawer: widget.androidDrawer,
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
-              height: 80,
+              height: 100,
               child: const Icon(Icons.bluetooth_connected, size: 64.0),
             ),
             Text(
@@ -194,18 +203,21 @@ class _OptionTabState extends State<OptionTab> {
                   size: 24.0,
                 ),
                 onPressed: () {
-                  if (status == SystemStatus.connected &&
-                      connectedDevice != null) {
-                    Navigator.push<void>(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                ChatPage(server: connectedDevice!)));
-                    return;
-                  }
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => DiscoveryPage()));
+
+                  // if (status == SystemStatus.connected &&
+                  //     connectedDevice != null) {
+                  //   Navigator.push<void>(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //           builder: (context) =>
+                  //               ChatPage(server: connectedDevice!)));
+                  //   return;
+                  // }
                 },
                 label: const Text('Connect to Glasses')),
-            ElevatedButton.icon(
+            connectedDevice?.isConnected == true ? ElevatedButton.icon(
                 icon: const Icon(
                   // <-- Icon
                   Icons.apps_outlined,
@@ -216,8 +228,25 @@ class _OptionTabState extends State<OptionTab> {
                       MaterialPageRoute(builder: (context) => ControlPanel()));
                   return;
                 },
-                label: const Text('Control Glasses')),
+                label: const Text('Control Glasses')) : SizedBox.shrink(),
 
+            // ElevatedButton.icon(
+            //     icon: const Icon(
+            //       // <-- Icon
+            //       Icons.sunny,
+            //       size: 24.0,
+            //     ),
+            //     onPressed: () async {
+            //       try {
+            //         Map<String, dynamic> data = await fetchWeatherData();
+
+            //         setState(() {
+            //           weather = data;
+            //         });
+            //         // print(weather);
+            //       } catch (e) {}
+            //     },
+            //     label: const Text('Get Weather')),
             ElevatedButton.icon(
                 icon: const Icon(
                   // <-- Icon
@@ -226,22 +255,26 @@ class _OptionTabState extends State<OptionTab> {
                 ),
                 onPressed: () async {
                   try {
-                    Map<String, dynamic> data = await fetchWeatherData();
+                    double altitudeData = await fetchAltitudeData(context);
+                    _setAltitude(altitudeData);
 
-                    setState(() {
-                      weather = data;
-                    });
+                    // Map<String, dynamic> data = await fetchWeatherData();
+
+                    // setState(() {
+                    //   weather = data;
+                    // });
                     // print(weather);
                   } catch (e) {}
                 },
-                label: const Text('Get Weather')),
+                label: const Text('Get Altitude')),
             TimerButton(),
             WeatherFetcher(setWeather: handleWeatherUpdate),
             weather.isNotEmpty
                 ? DisplayWeather(
                     setWeather: handleWeatherUpdate,
                     weatherJson: jsonEncode(weather))
-                : SizedBox.shrink()
+                : SizedBox.shrink(),
+            AltitudeWidget(altitude: altitude)
           ],
         ),
       ),

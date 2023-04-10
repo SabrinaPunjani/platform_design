@@ -74,75 +74,14 @@ class PlatformAdaptingHomePage extends StatefulWidget {
 }
 
 class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
-  // This app keeps a global key for the songs tab because it owns a bunch of
-  // data. Since changing platform re-parents those tabs into different
-  // scaffolds, keeping a global key to it lets this app keep that tab's data as
-  // the platform toggles.
-  //
-  // This isn't needed for apps that doesn't toggle platforms while running.
   final optionTabKey = GlobalKey();
 
-  // In Material, this app uses the hamburger menu paradigm and flatly lists
-  // all 4 possible tabs. This drawer is injected into the songs tab which is
-  // actually building the scaffold around the drawer.
   Widget _buildAndroidHomePage(BuildContext context) {
     return OptionTab(
       key: optionTabKey,
-      androidDrawer: _AndroidDrawer(),
+      androidDrawer: _AndroidDrawer(handleHudToggle: handleHudToggle),
     );
   }
-
-  // On iOS, the app uses a bottom tab paradigm. Here, each tab view sits inside
-  // a tab in the tab scaffold. The tab scaffold also positions the tab bar
-  // in a row at the bottom.
-  //
-  // An important thing to note is that while a Material Drawer can display a
-  // large number of items, a tab bar cannot. To illustrate one way of adjusting
-  // for this, the app folds its fourth tab (the settings page) into the
-  // third tab. This is a common pattern on iOS.
-
-  // Widget _buildIosHomePage(BuildContext context) {
-  //   return CupertinoTabScaffold(
-  //     tabBar: CupertinoTabBar(
-  //       items: const [
-  //         BottomNavigationBarItem(
-  //           label: OptionTab.title,
-  //           icon: OptionTab.iosIcon,
-  //         ),
-  //         BottomNavigationBarItem(
-  //           label: SettingsTab.title,
-  //           icon: SettingsTab.iosIcon,
-  //         ),
-  //         BottomNavigationBarItem(
-  //           label: ConnectionsTab.title,
-  //           icon: ConnectionsTab.iosIcon,
-  //         ),
-  //       ],
-  //     ),
-  //     tabBuilder: (context, index) {
-  //       switch (index) {
-  //         case 0:
-  //           return CupertinoTabView(
-  //             defaultTitle: OptionTab.title,
-  //             builder: (context) => OptionTab(key: optionTabKey),
-  //           );
-  //         case 1:
-  //           return CupertinoTabView(
-  //             defaultTitle: SettingsTab.title,
-  //             builder: (context) => const SettingsTab(),
-  //           );
-  //         case 2:
-  //           return CupertinoTabView(
-  //             defaultTitle: ConnectionsTab.title,
-  //             builder: (context) => const ConnectionsTab(),
-  //           );
-  //         default:
-  //           assert(false, 'Unexpected tab');
-  //           return const SizedBox.shrink();
-  //       }
-  //     },
-  //   );
-  // }
 
   @override
   void initState() {
@@ -151,15 +90,19 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
 
   @override
   Widget build(context) {
-    // return PlatformWidget(
-    //   androidBuilder: _buildAndroidHomePage,
-    //   // iosBuilder: _buildIosHomePage,
-    // );
     return _buildAndroidHomePage(context);
+  }
+
+  void handleHudToggle(data){
+    print("HELLO $data");
   }
 }
 
 class _AndroidDrawer extends StatelessWidget {
+
+  _AndroidDrawer({required this.handleHudToggle});
+  final handleHudToggle;
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -191,7 +134,7 @@ class _AndroidDrawer extends StatelessWidget {
             onTap: () {
               Navigator.pop(context);
               Navigator.push<void>(context,
-                  MaterialPageRoute(builder: (context) => const SettingsTab()));
+                  MaterialPageRoute(builder: (context) => SettingsTab(handleHudToggle: handleHudToggle)));
             },
           ),
           ListTile(

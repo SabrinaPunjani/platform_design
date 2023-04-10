@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -51,5 +52,39 @@ Future<Map<String, dynamic>> fetchWeatherData() async {
     }
   } else {
     throw Exception('Location permission not granted');
+  }
+}
+
+Future<double> fetchAltitudeData(BuildContext context) async {
+  print("Fetching Altitude Data...");
+
+  // Check for location permission
+  PermissionStatus permissionStatus = await Permission.location.request();
+
+  if (permissionStatus.isGranted) {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high);
+    double latitude = position.latitude;
+    double longitude = position.longitude;
+
+    // Build the Elevation API URL
+    String apiUrl =
+        'https://atlas.microsoft.com/elevation/point/json?api-version=1.0&subscription-key=$subscriptionKey&points=$longitude,$latitude';
+
+    // Fetch altitude data from Azure Maps Elevation API
+    final response = await http.get(Uri.parse(apiUrl));
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+
+      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      double altitude = jsonResponse["data"][0]['elevationInMeter'];
+
+      return altitude;
+
+    } else {
+      throw Exception('Failed to load altitude data');
+    }
+  } else {
+      throw Exception('Location permission not granted');
   }
 }

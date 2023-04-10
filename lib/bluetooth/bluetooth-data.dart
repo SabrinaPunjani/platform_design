@@ -231,8 +231,8 @@ class _ChatPage extends State<ChatPage> {
     if (text.length > 0) {
       try {
         // FOR TESTING!
-        connection!.output.add(Uint8List.fromList(utf8.encode(jsonStr)));
-        // connection!.output.add(Uint8List.fromList(utf8.encode(text + "\r\n")));
+        // connection!.output.add(Uint8List.fromList(utf8.encode(jsonStr)));
+        connection!.output.add(Uint8List.fromList(utf8.encode(text + "\r\n")));
         await connection!.output.allSent;
 
         setState(() {
