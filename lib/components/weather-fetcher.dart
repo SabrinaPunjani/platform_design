@@ -29,7 +29,7 @@ class _WeatherFetcherState extends State<WeatherFetcher> {
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _timer.cancel();
     super.dispose();
   }
 

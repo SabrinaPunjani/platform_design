@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:platform_design/account.dart';
+import 'package:platform_design/bluetooth/bluetooth-fns.dart';
 
 import 'HUD.dart';
 import 'connections.dart';
@@ -93,13 +94,13 @@ class _PlatformAdaptingHomePageState extends State<PlatformAdaptingHomePage> {
     return _buildAndroidHomePage(context);
   }
 
-  void handleHudToggle(data){
-    print("HELLO $data");
+  void handleHudToggle(data) {
+    print("Hud Change Data: $data");
+    // bluetoothSend(connection, {txt})
   }
 }
 
 class _AndroidDrawer extends StatelessWidget {
-
   _AndroidDrawer({required this.handleHudToggle});
   final handleHudToggle;
 
@@ -133,8 +134,11 @@ class _AndroidDrawer extends StatelessWidget {
             title: const Text(SettingsTab.title),
             onTap: () {
               Navigator.pop(context);
-              Navigator.push<void>(context,
-                  MaterialPageRoute(builder: (context) => SettingsTab(handleHudToggle: handleHudToggle)));
+              Navigator.push<void>(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          SettingsTab(handleHudToggle: handleHudToggle)));
             },
           ),
           ListTile(

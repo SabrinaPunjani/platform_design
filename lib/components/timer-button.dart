@@ -5,8 +5,9 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class TimerButton extends StatefulWidget {
   final BluetoothDevice? server;
+  final onTimerUpdate;
 
-  const TimerButton({this.server});
+  const TimerButton({this.server, this.onTimerUpdate});
 
   @override
   _TimerButtonState createState() => _TimerButtonState();
@@ -25,16 +26,18 @@ class _TimerButtonState extends State<TimerButton> {
       if (_timerActive) {
         _stopwatch.start();
         _startTimer();
+        widget.onTimerUpdate('start');
       } else {
         _stopwatch.stop();
         _timer.cancel();
+        widget.onTimerUpdate('stop');
       }
     });
 
-    Map<String, dynamic> jsonMessage = {
-      'timer': _timerActive,
-    };
-    print(json.encode(jsonMessage));
+    // Map<String, dynamic> jsonMessage = {
+    //   'timer': _timerActive,
+    // };
+    // print(json.encode(jsonMessage));
   }
 
   void _resetTimer() {
@@ -49,6 +52,7 @@ class _TimerButtonState extends State<TimerButton> {
       _timer.cancel();
       _stopwatch.reset();
       _elapsedTime = Duration();
+      widget.onTimerUpdate('reset');
     });
   }
 

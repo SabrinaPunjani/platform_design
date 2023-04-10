@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 
+import 'package:platform_design/utils/api.dart';
+
 // class DisplayWeather extends StatefulWidget {
 //   const DisplayWeather({Key? key}) : super(key: key);
 
@@ -21,7 +23,9 @@ class DisplayWeather extends StatelessWidget {
 
   DisplayWeather({required this.setWeather, required this.weatherJson});
 
-  void onRefresh() {}
+  void onRefresh() {
+    fetchWeatherData().then((weatherData) => setWeather(weatherData));
+  }
 
   @override
   Widget build(BuildContext context) {

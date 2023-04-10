@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:platform_design/bluetooth/bluetooth-data.dart';
+import 'package:platform_design/bluetooth/bluetooth-fns.dart';
 
 import 'bluetooth-device-list-entry.dart';
 
@@ -128,16 +128,51 @@ class _DiscoveryPage extends State<DiscoveryPage> {
             rssi: result.rssi,
             onTap: () async {
               try {
+                print(
+                    "${device.name}: bonded? ${device.isBonded}, connected? ${device.isConnected}");
                 // connectToDevice(address);
+
+                // bonded means it has previously connected to the device, but is
+                // not currently connected.
+
                 if (!device.isBonded) {
                   bool bonded = (await FlutterBluetoothSerial.instance
                       .bondDeviceAtAddress(address))!;
                 }
 
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) {
-                  return ChatPage(server: device);
-                }));
+                if (!device.isConnected) {
+                  BluetoothConnection.toAddress(device.address).then((conn) {
+                    // print(conn);
+                    if (conn.isConnected) {
+                      widget.onConnect(device, conn);
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text(
+                                'Now Connected to "${result.device.name}"'),
+                            // content: Text("P"),
+                            actions: <Widget>[
+                              new TextButton(
+                                child: new Text("Ok"),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  });
+                  // BluetoothConnection conn =
+                  //     await BluetoothConnection.toAddress(device.address);
+                }
+
+                // Navigator.of(context)
+                //     .push(MaterialPageRoute(builder: (context) {
+                //   return ChatPage(server: device);
+                // }));
                 // else try to. send data
 
                 // BluetoothConnection.toAddress(address).then((conn) => {
@@ -148,7 +183,8 @@ class _DiscoveryPage extends State<DiscoveryPage> {
                   context: context,
                   builder: (BuildContext context) {
                     return AlertDialog(
-                      title: Text('Unable to connect to ${result.device.name}'),
+                      title:
+                          Text('Unable to connect to "${result.device.name}"'),
                       content: Text("${ex.toString()}"),
                       actions: <Widget>[
                         new TextButton(
@@ -219,13 +255,4 @@ class _DiscoveryPage extends State<DiscoveryPage> {
       ),
     );
   }
-}
-
-void connectToDevice(String address) async {
-  try {
-    bool bonded =
-        (await FlutterBluetoothSerial.instance.bondDeviceAtAddress(address))!;
-  } catch (e) {}
-
-  // print('Bonding with ${device.address} has ${bonded ? 'succed' : 'failed'}.');
 }

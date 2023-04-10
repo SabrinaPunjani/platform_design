@@ -53,13 +53,9 @@ class _OptionTabState extends State<OptionTab> {
 
   Map<String, dynamic> weather = {};
   double altitude = 0;
-  bool timer = false;
-
-  static const _itemsLength = 1;
+  String timer = 'stop';
 
   bool isScanning = false;
-  late List<MaterialColor> colors;
-  late List<String> songNames;
 
   @override
   void initState() {
@@ -72,13 +68,12 @@ class _OptionTabState extends State<OptionTab> {
       });
 
       // set connection
-      BluetoothConnection.toAddress(connectedDevice?.address).then((_connection) {
+      BluetoothConnection.toAddress(connectedDevice?.address)
+          .then((_connection) {
         setState(() {
           conn = _connection;
         });
       });
-
-
     }).catchError((e) {
       connectedDevice = null;
       status = SystemStatus.off;
@@ -89,6 +84,8 @@ class _OptionTabState extends State<OptionTab> {
         _bluetoothState = state;
       });
     });
+
+    fetchAltitudeData().then((altitudeData) => _setAltitude(altitudeData));
 
     Future.doWhile(() async {
       // Wait if adapter not enabled
@@ -143,14 +140,10 @@ class _OptionTabState extends State<OptionTab> {
       });
     });
     return;
-    // return Future.delayed(
-    //   // This is just an arbitrary delay that simulates some network activity.
-    //   const Duration(seconds: 2),
-    //   () => setState(() => _setData()),
-    // );
   }
 
   void handleWeatherUpdate(weatherData) {
+    print("Update Weather");
     // print("yo\n");
     // print({: weatherData});
     bluetoothSend(conn, jsonEncode({"weather": weatherData}));
@@ -159,19 +152,30 @@ class _OptionTabState extends State<OptionTab> {
     });
   }
 
-  void handleStartTimerUpdate(status) {
+  void handleTimerUpdate(status) {
+    print("Update Timer");
     setState(() {
       timer = status;
     });
+
+    bluetoothSend(conn, jsonEncode({"timer": status}));
   }
 
   void handleHudToggle(hudData) {}
 
   void _setAltitude(double _altitude) {
+    print("Set Altitude");
     setState(() {
       altitude = _altitude;
     });
     bluetoothSend(conn, jsonEncode({"altitude": altitude}));
+  }
+
+  void _onConnect(BluetoothDevice device, BluetoothConnection _conn) {
+    setState(() {
+      connectedDevice = device;
+      conn = _conn;
+    });
   }
 
   Widget _buildAndroid(BuildContext context) {
@@ -203,32 +207,48 @@ class _OptionTabState extends State<OptionTab> {
                   size: 24.0,
                 ),
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => DiscoveryPage()));
-
-                  // if (status == SystemStatus.connected &&
-                  //     connectedDevice != null) {
-                  //   Navigator.push<void>(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //           builder: (context) =>
-                  //               ChatPage(server: connectedDevice!)));
-                  //   return;
-                  // }
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DiscoveryPage(
+                                onConnect: _onConnect,
+                              )));
                 },
                 label: const Text('Connect to Glasses')),
-            connectedDevice?.isConnected == true ? ElevatedButton.icon(
-                icon: const Icon(
-                  // <-- Icon
-                  Icons.apps_outlined,
-                  size: 24.0,
-                ),
-                onPressed: () {
-                  Navigator.push<void>(context,
-                      MaterialPageRoute(builder: (context) => ControlPanel()));
-                  return;
-                },
-                label: const Text('Control Glasses')) : SizedBox.shrink(),
+            conn?.isConnected == true
+                ? ElevatedButton.icon(
+                    icon: const Icon(
+                      // <-- Icon
+                      Icons.device_hub_outlined,
+                      size: 24.0,
+                    ),
+                    onPressed: () {
+                      conn?.dispose();
+                      // Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //         builder: (context) => DiscoveryPage(
+                      //               onConnect: _onConnect,
+                      //             )));
+                    },
+                    label: const Text('Disconnect from Glasses'))
+                : SizedBox.shrink(),
+            connectedDevice?.isConnected == true
+                ? ElevatedButton.icon(
+                    icon: const Icon(
+                      // <-- Icon
+                      Icons.apps_outlined,
+                      size: 24.0,
+                    ),
+                    onPressed: () {
+                      Navigator.push<void>(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ControlPanel()));
+                      return;
+                    },
+                    label: const Text('Control Glasses'))
+                : SizedBox.shrink(),
 
             // ElevatedButton.icon(
             //     icon: const Icon(
@@ -255,7 +275,7 @@ class _OptionTabState extends State<OptionTab> {
                 ),
                 onPressed: () async {
                   try {
-                    double altitudeData = await fetchAltitudeData(context);
+                    double altitudeData = await fetchAltitudeData();
                     _setAltitude(altitudeData);
 
                     // Map<String, dynamic> data = await fetchWeatherData();
@@ -267,14 +287,17 @@ class _OptionTabState extends State<OptionTab> {
                   } catch (e) {}
                 },
                 label: const Text('Get Altitude')),
-            TimerButton(),
+            TimerButton(onTimerUpdate: handleTimerUpdate),
             WeatherFetcher(setWeather: handleWeatherUpdate),
             weather.isNotEmpty
                 ? DisplayWeather(
                     setWeather: handleWeatherUpdate,
                     weatherJson: jsonEncode(weather))
                 : SizedBox.shrink(),
-            AltitudeWidget(altitude: altitude)
+            AltitudeWidget(
+              altitude: altitude,
+              onRefresh: _setAltitude,
+            )
           ],
         ),
       ),

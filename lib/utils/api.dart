@@ -55,7 +55,7 @@ Future<Map<String, dynamic>> fetchWeatherData() async {
   }
 }
 
-Future<double> fetchAltitudeData(BuildContext context) async {
+Future<double> fetchAltitudeData() async {
   print("Fetching Altitude Data...");
 
   // Check for location permission
@@ -63,7 +63,7 @@ Future<double> fetchAltitudeData(BuildContext context) async {
 
   if (permissionStatus.isGranted) {
     Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.high);
     double latitude = position.latitude;
     double longitude = position.longitude;
 
@@ -75,16 +75,14 @@ Future<double> fetchAltitudeData(BuildContext context) async {
     final response = await http.get(Uri.parse(apiUrl));
     print(response.statusCode);
     if (response.statusCode == 200) {
-
       Map<String, dynamic> jsonResponse = jsonDecode(response.body);
       double altitude = jsonResponse["data"][0]['elevationInMeter'];
 
       return altitude;
-
     } else {
       throw Exception('Failed to load altitude data');
     }
   } else {
-      throw Exception('Location permission not granted');
+    throw Exception('Location permission not granted');
   }
 }

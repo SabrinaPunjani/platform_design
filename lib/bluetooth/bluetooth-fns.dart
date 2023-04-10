@@ -19,10 +19,7 @@ Future<BluetoothDevice?> getConnectedDevice() async {
     print(e);
   }
 
-  // Assuming only one device is connected
   BluetoothDevice device = devices[0];
-
-  // Get the currently connected device by calling `BluetoothConnection.toAddress()`
 
   if (device.isConnected) {
     return device;
@@ -40,17 +37,17 @@ Future<BluetoothDevice?> getConnectedDevice() async {
 
 Future<bool> bluetoothSend(BluetoothConnection? connection, String txt) async {
   try {
-    var packet = {
+    var packet = jsonEncode({
       ...template,
       ...jsonDecode(txt),
-    };
+    });
 
     print("[Bluetooth Comm] Sending packet = $packet");
     if (connection == null) {
       print("[Bluetooth Comm] Connection not established");
       return false;
     }
-    connection.output.add(Uint8List.fromList(utf8.encode(txt)));
+    connection.output.add(Uint8List.fromList(utf8.encode(packet)));
     await connection.output.allSent;
     print("[Bluetooth Comm] Sent message");
     return true;
@@ -58,4 +55,22 @@ Future<bool> bluetoothSend(BluetoothConnection? connection, String txt) async {
     print("[Bluetooth Comm] Error sending message");
     return false;
   }
+}
+
+Future<bool?> disconnectFromDevice(BluetoothDevice btDevice) async {
+  final status = await FlutterBluetoothSerial.instance
+      .removeDeviceBondWithAddress(btDevice.address);
+  return status;
+}
+
+Future<bool?> connectToDevice(String address) async {
+  try {
+    bool bonded =
+        (await FlutterBluetoothSerial.instance.bondDeviceAtAddress(address))!;
+    return bonded;
+  } catch (e) {
+    return false;
+  }
+
+  // print('Bonding with ${device.address} has ${bonded ? 'succed' : 'failed'}.');
 }

@@ -5,15 +5,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-// #enddocregion platform_imports
-import 'settings_tab.dart';
-import 'widgets.dart';
-
-import 'package:webview_flutter_android/webview_flutter_android.dart';
-// Import for iOS features.
-import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
-// #enddocregion platform_imports
-
 class AccountTab extends StatelessWidget {
   static const title = 'Signup/Login';
   static const androidIcon = Icon(Icons.account_circle_rounded);
@@ -41,7 +32,6 @@ class AccountTab extends StatelessWidget {
       body: _buildBody(context), //calling buildbody
     );
   }
-
 
   @override
   Widget build(context) {
