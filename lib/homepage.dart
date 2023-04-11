@@ -14,7 +14,7 @@ import 'package:platform_design/bluetooth/bluetooth-fns.dart';
 import 'package:platform_design/components/altitude-widget.dart';
 import 'package:platform_design/components/display-weather.dart';
 import 'package:platform_design/components/weather-fetcher.dart';
-import 'package:platform_design/control-panel.dart';
+import 'package:platform_design/components/hud-toggles.dart';
 import 'package:platform_design/utils/api.dart';
 import 'package:platform_design/utils/definitions.dart';
 
@@ -56,12 +56,12 @@ class _OptionTabState extends State<OptionTab> {
   String timer = 'stop';
 
   var hudToggles = {
-    "weather": false,
-    "biometrics": false,
-    "blindspot": false,
-    "bike_stats": false,
-    "timer": false,
-    "altitude": false,
+    "weather": true,
+    "biometrics": true,
+    "blindspot": true,
+    "bike_stats": true,
+    "timer": true,
+    "altitude": true,
   };
 
   bool isScanning = false;
@@ -82,6 +82,9 @@ class _OptionTabState extends State<OptionTab> {
         setState(() {
           conn = _connection;
         });
+        // Once established, send everything
+        // print("Established conn, will send");
+     
       });
     }).catchError((e) {
       connectedDevice = null;
@@ -153,8 +156,6 @@ class _OptionTabState extends State<OptionTab> {
 
   void handleWeatherUpdate(weatherData) {
     print("Update Weather");
-    // print("yo\n");
-    // print({: weatherData});
     bluetoothSend(conn, jsonEncode({"weather": weatherData}));
     setState(() {
       weather = weatherData;
@@ -170,7 +171,9 @@ class _OptionTabState extends State<OptionTab> {
     bluetoothSend(conn, jsonEncode({"timer": status}));
   }
 
-  void handleHudToggle(hudData) {}
+  void handleHudToggle(hudData) {
+    
+  }
 
   void _setAltitude(double _altitude) {
     print("Set Altitude");
@@ -185,28 +188,40 @@ class _OptionTabState extends State<OptionTab> {
       connectedDevice = device;
       conn = _conn;
     });
+    bluetoothSend(conn, jsonEncode({ "hud_toggles": hudToggles, "timer": timer, "weather": weather, "altitude": altitude }));
+  }
+
+  void _updateToggle(String key, bool value) {
+    setState(() {
+      hudToggles[key] = value;
+    });
+    bluetoothSend(conn, jsonEncode({"hud_toggles": hudToggles}));
   }
 
   Widget _buildAndroid(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        scrolledUnderElevation: 0.0,
         title: const Text(OptionTab.title),
       ),
       drawer: widget.androidDrawer,
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          // mainAxisAlignment: MainAxisAlignment.start,
+          // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(
               height: 100,
               child: const Icon(Icons.bluetooth_connected, size: 64.0),
             ),
-            Text(
-              connectedDevice != null
-                  ? ('Connected to ${connectedDevice?.name}')
-                  : ('Not Connected'),
-              style: Theme.of(context).textTheme.headlineSmall,
+            Center(
+              child: Text(
+                connectedDevice != null
+                    ? ('Connected to ${connectedDevice?.name}')
+                    : ('Not Connected'),
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
             ),
             SizedBox(height: 10), // Column Padding
             conn?.isConnected == true
@@ -252,13 +267,20 @@ class _OptionTabState extends State<OptionTab> {
             //         label: const Text('Control Glasses'))
             //     : SizedBox.shrink(),
             SizedBox(height: 32), // Column Padding
+            HudToggles(
+              hudToggles: hudToggles,
+              onToggle: _updateToggle,
+            ),
+            SizedBox(height: 16),
             TimerButton(onTimerUpdate: handleTimerUpdate),
+            SizedBox(height: 16), // Column Padding
             WeatherFetcher(setWeather: handleWeatherUpdate),
             weather.isNotEmpty
                 ? DisplayWeather(
                     setWeather: handleWeatherUpdate,
                     weatherJson: jsonEncode(weather))
                 : SizedBox.shrink(),
+            SizedBox(height: 16),
             AltitudeWidget(
               altitude: altitude,
               onRefresh: _setAltitude,

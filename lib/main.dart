@@ -10,7 +10,7 @@ import 'package:platform_design/bluetooth/bluetooth-fns.dart';
 
 import 'HUD.dart';
 import 'connections.dart';
-import 'settings_tab.dart';
+// import 'settings_tab.dart';
 import 'homepage.dart';
 import 'widgets.dart';
 
@@ -129,18 +129,18 @@ class _AndroidDrawer extends StatelessWidget {
               Navigator.pop(context);
             },
           ),
-          ListTile(
-            leading: SettingsTab.androidIcon,
-            title: const Text(SettingsTab.title),
-            onTap: () {
-              Navigator.pop(context);
-              Navigator.push<void>(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          SettingsTab(handleHudToggle: handleHudToggle)));
-            },
-          ),
+          // ListTile(
+          //   leading: SettingsTab.androidIcon,
+          //   title: const Text(SettingsTab.title),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //     Navigator.push<void>(
+          //         context,
+          //         MaterialPageRoute(
+          //             builder: (context) =>
+          //                 SettingsTab(handleHudToggle: handleHudToggle)));
+          //   },
+          // ),
           ListTile(
             leading: ConnectionsTab.androidIcon,
             title: const Text(ConnectionsTab.title),

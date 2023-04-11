@@ -76,55 +76,52 @@ class _TimerButtonState extends State<TimerButton> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                ElevatedButton.icon(
+                  icon: _timerActive
+                      ? const Icon(
+                          Icons.pause,
+                          size: 24.0,
+                        )
+                      : const Icon(
+                          Icons.play_arrow,
+                          size: 24.0,
+                        ),
+                  onPressed: _toggleTimer,
+                  label: Text(_timerActive ? 'Stop Timer' : 'Start Timer'),
+                ),
+                SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: _resetTimer,
+                  child: const Icon(Icons.refresh),
+                  // style: ElevatedButton.styleFrom(
+                  //   shape: CircleBorder(),
+                  //   padding: EdgeInsets.all(12),
+                  // ),
+                ),
+              ],
+            ),
+            RichText(
+              text: TextSpan(
+                style: TextStyle(fontSize: 20, color: Colors.black),
                 children: [
-                  ElevatedButton.icon(
-                    icon: _timerActive
-                        ? const Icon(
-                            Icons.pause,
-                            size: 24.0,
-                          )
-                        : const Icon(
-                            Icons.play_arrow,
-                            size: 24.0,
-                          ),
-                    onPressed: _toggleTimer,
-                    label: Text(_timerActive ? 'Stop Timer' : 'Start Timer'),
+                  TextSpan(
+                    text:
+                        '${_elapsedTime.inMinutes.toString().padLeft(2, '0')}:${(_elapsedTime.inSeconds % 60).toString().padLeft(2, '0')}.',
                   ),
-                  SizedBox(width: 8),
-                  ElevatedButton(
-                    onPressed: _resetTimer,
-                    child: const Icon(Icons.refresh),
-                    // style: ElevatedButton.styleFrom(
-                    //   shape: CircleBorder(),
-                    //   padding: EdgeInsets.all(12),
-                    // ),
+                  TextSpan(
+                    text:
+                        '${(_elapsedTime.inMilliseconds % 1000).toString().padLeft(3, '0')}',
+                    style: TextStyle(fontSize: 16),
                   ),
                 ],
               ),
-              RichText(
-                text: TextSpan(
-                  style: TextStyle(fontSize: 20, color: Colors.black),
-                  children: [
-                    TextSpan(
-                      text:
-                          '${_elapsedTime.inMinutes.toString().padLeft(2, '0')}:${(_elapsedTime.inSeconds % 60).toString().padLeft(2, '0')}.',
-                    ),
-                    TextSpan(
-                      text:
-                          '${(_elapsedTime.inMilliseconds % 1000).toString().padLeft(3, '0')}',
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
         // Add other widgets if needed
       ],

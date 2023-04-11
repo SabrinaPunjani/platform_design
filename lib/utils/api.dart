@@ -68,20 +68,22 @@ Future<double> fetchAltitudeData() async {
     double longitude = position.longitude;
 
     // Build the Elevation API URL
-    String apiUrl =
-        'https://atlas.microsoft.com/elevation/point/json?api-version=1.0&subscription-key=$subscriptionKey&points=$longitude,$latitude';
+    // String apiUrl =
+    //     'https://atlas.microsoft.com/elevation/point/json?api-version=1.0&subscription-key=$subscriptionKey&points=$longitude,$latitude';
 
-    // Fetch altitude data from Azure Maps Elevation API
-    final response = await http.get(Uri.parse(apiUrl));
-    print(response.statusCode);
-    if (response.statusCode == 200) {
-      Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-      double altitude = jsonResponse["data"][0]['elevationInMeter'];
+    // // Fetch altitude data from Azure Maps Elevation API
+    // final response = await http.get(Uri.parse(apiUrl));
+    // print(response.statusCode);
+    // if (response.statusCode == 200) {
+    //   Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+    //   double altitude = jsonResponse["data"][0]['elevationInMeter'];
 
-      return altitude;
-    } else {
-      throw Exception('Failed to load altitude data');
-    }
+    //   return altitude;
+    // } else {
+    //   throw Exception('Failed to load altitude data');
+    // }
+    return position.altitude;
+    // Location location = Location();
   } else {
     throw Exception('Location permission not granted');
   }
